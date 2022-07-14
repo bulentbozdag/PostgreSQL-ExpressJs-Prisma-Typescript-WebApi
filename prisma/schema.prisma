@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//SQL SERVER
+// datasource db_SqlServer {
+//   provider = "sqlserver"
+//   url      = "sqlserver://localhost:1433;initial catalog=sample;user=sa;password=mypassword;"
+// }
+
+//MYSQL
+// datasource db_MYSQL {
+//   provider = "mysql"
+//   url      = "mysql://janedoe:mypassword@localhost:3306/notesapi"
+// }
+
+//MONGODB
+// datasource db_MongoDB {
+//   provider = "mongodb"
+//   url      = "mongodb://USERNAME:PASSWORD@HOST/DATABASE?authSource=admin&retryWrites=true&w=majority"
+// }
+
+model Repositories {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String   @db.VarChar(255)
+  content   String?
+  published Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  isActive  Boolean  @default(true)
+  sorting   Int      @default(0)
+}
+
+model Profile {
+  id        Int     @id @default(autoincrement())
+  bio       String?
+  githubUrl String?
+  user      User    @relation(fields: [userId], references: [id])
+  userId    Int     @unique
+}
+
+model User {
+  id      Int            @id @default(autoincrement())
+  email   String         @unique
+  name    String?
+  repos   Repositories[]
+  profile Profile? 
+}
